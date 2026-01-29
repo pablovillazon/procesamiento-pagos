@@ -17,8 +17,8 @@ export class AuthService {
     if(!user || !bcrypt.compareSync(password, user.password)) return null;
 
     return user;
-    }
-async login(user: UserEntity) {
+  }
+  async login(user: UserEntity) {
     const payload = { sub: user.id, role: user};
     return {
       access_token: this.jwt.sign(payload),
