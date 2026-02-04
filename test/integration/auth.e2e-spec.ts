@@ -140,4 +140,20 @@ describe('Auth Integration Tests (e2e)', () => {
       expect(result.access_token.split('.').length).toBe(3); // JWT has 3 parts
     });
   });
+
+  describe('Auth + DB integration', () => {
+    it('creates user and authenticates', async () => {
+      await request(app.getHttpServer())      
+      .post('/users')
+      .send({ email: 'admin@test.com', password: 'secret123' })
+      .expect(201)
+
+      const res = await request(app.getHttpServer())
+      .post('/auth/login')
+      .send({ email: 'admin@test.com', password: 'secret123' })
+      .expect(201)
+
+      expect(res.body.access_token).toBeDefined()
+    })
+  });
 });

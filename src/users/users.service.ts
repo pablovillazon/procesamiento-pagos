@@ -27,28 +27,29 @@ export class UsersService {
   
   }
 
-  async createUser(email: string, password: string, role: Role): Promise<UserEntity> {
-    const existingUser = await this.prisma.user.findUnique({ where: { email } });
+  async create(data: { email: string, password: string, role: Role }) {
+    const existingUser = await this.prisma.user.findUnique({ where: { email: data.email } });
     if (existingUser) {
-      throw new ConflictException(`User with email ${email} already exists`);
+      throw new ConflictException(`User with email ${data.email} already exists`);
     }
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(data.password, 12);
+
     const user = await this.prisma.user.create({
       data: {
-        email,
+        email: data.email,
         password: hashedPassword,
-        role
+        role: data.role
       }
     });
     return new UserEntity(user);
   }
 
-  async deactivateUser(id: string): Promise<UserEntity> {
-    const user = await this.FindById(id);
-    const updatedUser = await this.prisma.user.update({
+  async deactivate(id: string): Promise<void> {
+    //const user = await this.FindById(id);
+    await this.FindById(id) // Ensure user exists
+    await this.prisma.user.update({
       where: { id },
       data: { active: false },
-    });
-    return new UserEntity(updatedUser);
+    })
   }
 }

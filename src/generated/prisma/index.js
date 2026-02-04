@@ -102,6 +102,31 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.BillScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  period: 'period',
+  consumptionM3: 'consumptionM3',
+  fixedAmount: 'fixedAmount',
+  variableAmount: 'variableAmount',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentIntentScalarFieldEnum = {
+  id: 'id',
+  billId: 'billId',
+  provider: 'provider',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  externalReference: 'externalReference',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  confirmedAt: 'confirmedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -111,29 +136,54 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   OPERATOR: 'OPERATOR',
   CASHIER: 'CASHIER'
 };
 
+exports.BillStatus = exports.$Enums.BillStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  CREATED: 'CREATED',
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED'
+};
+
+exports.PaymentProvider = exports.$Enums.PaymentProvider = {
+  QR_BNB: 'QR_BNB',
+  QR_BCP: 'QR_BCP',
+  QR_SIMPLE: 'QR_SIMPLE'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Bill: 'Bill',
+  PaymentIntent: 'PaymentIntent'
 };
 /**
  * Create the Client
  */
 const config = {
-  "previewFeatures": [
-    "omitApi"
-  ],
+  "previewFeatures": [],
   "clientVersion": "7.3.0",
   "engineVersion": "9d6ad21cbbceab97458517b147a6a09ff43aa735",
   "activeProvider": "postgresql",
-  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n}\n\ngenerator client {\n  provider        = \"prisma-client-js\"\n  output          = \"../src/generated/prisma\"\n  previewFeatures = [\"omitApi\"]\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  password  String\n  role      Role\n  active    Boolean  @default(true)\n  createdAt DateTime @default(now())\n}\n\nenum Role {\n  ADMIN\n  OPERATOR\n  CASHIER\n}\n"
+  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  email     String   @unique\n  password  String\n  role      Role\n  active    Boolean  @default(true)\n  createdAt DateTime @default(now())\n}\n\nenum Role {\n  ADMIN\n  OPERATOR\n  CASHIER\n}\n\nmodel Bill {\n  id             String          @id @default(uuid())\n  userId         String\n  period         String\n  consumptionM3  Float\n  fixedAmount    Float\n  variableAmount Float\n  totalAmount    Float\n  status         BillStatus      @default(PENDING)\n  createdAt      DateTime        @default(now())\n  payments       PaymentIntent[]\n}\n\nenum BillStatus {\n  PENDING\n  PAID\n  CANCELLED\n}\n\nmodel PaymentIntent {\n  id                String          @id @default(uuid())\n  billId            String\n  bill              Bill            @relation(fields: [billId], references: [id])\n  provider          PaymentProvider\n  amount            Float\n  currency          String          @default(\"BOB\")\n  status            PaymentStatus   @default(CREATED)\n  externalReference String?\n  expiresAt         DateTime\n  createdAt         DateTime        @default(now())\n  confirmedAt       DateTime?\n\n  @@index([billId])\n  @@index([externalReference])\n}\n\nenum PaymentStatus {\n  CREATED\n  PENDING\n  CONFIRMED\n  FAILED\n  EXPIRED\n}\n\nenum PaymentProvider {\n  QR_BNB\n  QR_BCP\n  QR_SIMPLE\n}\n"
 }
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"active\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"User\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"password\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"role\",\"kind\":\"enum\",\"type\":\"Role\"},{\"name\":\"active\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Bill\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"userId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"period\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"consumptionM3\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"fixedAmount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"variableAmount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"totalAmount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"BillStatus\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"payments\",\"kind\":\"object\",\"type\":\"PaymentIntent\",\"relationName\":\"BillToPaymentIntent\"}],\"dbName\":null},\"PaymentIntent\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"billId\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"bill\",\"kind\":\"object\",\"type\":\"Bill\",\"relationName\":\"BillToPaymentIntent\"},{\"name\":\"provider\",\"kind\":\"enum\",\"type\":\"PaymentProvider\"},{\"name\":\"amount\",\"kind\":\"scalar\",\"type\":\"Float\"},{\"name\":\"currency\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"status\",\"kind\":\"enum\",\"type\":\"PaymentStatus\"},{\"name\":\"externalReference\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"expiresAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"confirmedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.compilerWasm = {
       getRuntime: async () => require('./query_compiler_fast_bg.js'),

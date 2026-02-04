@@ -129,6 +129,31 @@ exports.Prisma.UserScalarFieldEnum = {
   createdAt: 'createdAt'
 };
 
+exports.Prisma.BillScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  period: 'period',
+  consumptionM3: 'consumptionM3',
+  fixedAmount: 'fixedAmount',
+  variableAmount: 'variableAmount',
+  totalAmount: 'totalAmount',
+  status: 'status',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentIntentScalarFieldEnum = {
+  id: 'id',
+  billId: 'billId',
+  provider: 'provider',
+  amount: 'amount',
+  currency: 'currency',
+  status: 'status',
+  externalReference: 'externalReference',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  confirmedAt: 'confirmedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -138,14 +163,41 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
+};
 exports.Role = exports.$Enums.Role = {
   ADMIN: 'ADMIN',
   OPERATOR: 'OPERATOR',
   CASHIER: 'CASHIER'
 };
 
+exports.BillStatus = exports.$Enums.BillStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  CANCELLED: 'CANCELLED'
+};
+
+exports.PaymentProvider = exports.$Enums.PaymentProvider = {
+  QR_BNB: 'QR_BNB',
+  QR_BCP: 'QR_BCP',
+  QR_SIMPLE: 'QR_SIMPLE'
+};
+
+exports.PaymentStatus = exports.$Enums.PaymentStatus = {
+  CREATED: 'CREATED',
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  FAILED: 'FAILED',
+  EXPIRED: 'EXPIRED'
+};
+
 exports.Prisma.ModelName = {
-  User: 'User'
+  User: 'User',
+  Bill: 'Bill',
+  PaymentIntent: 'PaymentIntent'
 };
 
 /**

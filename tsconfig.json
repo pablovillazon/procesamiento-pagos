@@ -23,7 +23,10 @@
     "strictBindCallApply": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitAny": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "paths": {
+      "@prisma/*": ["src/generated/prisma/*"]
+    },
   }
 }
 
