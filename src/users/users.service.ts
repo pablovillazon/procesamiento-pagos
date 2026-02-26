@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service.js";
+import { PrismaService } from "../prisma/prisma.service";
 import { UserEntity } from "./entities/user.entity";
 import * as bcrypt from 'bcryptjs';
-import { Role } from "@prisma/client";
-//import { Role } from "../generated/prisma/enums";
+//import { Role } from "@prisma/client";
+import { Role } from "../generated/prisma/enums";
 
 @Injectable()
 export class UsersService {
@@ -20,6 +20,7 @@ export class UsersService {
 
   async findByEmail(email: string): Promise<UserEntity> {
     const user = await this.prisma.user.findUnique({ where: { email } });
+    console.log(`User fetched by email: ${JSON.stringify(user)}`);
     if (!user) {
       throw new NotFoundException(`User with email ${email} not found`);
     }

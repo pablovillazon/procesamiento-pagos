@@ -1,6 +1,7 @@
 import { CreatePaymentIntentUseCase } from '../create-payment-intent.usecase'
 import { PaymentIntentRepository } from '../../domain/payment-intent.repository'
-import { PaymentProvider, PaymentStatus } from '../../domain/payment-intent.entity'
+import { PaymentProvider } from '../../domain/payment-intent.entity'
+import { PaymentStatus } from '../../../payments/domain/payment-intent-status.enum'
 
 describe('CreatePaymentIntentUseCase', () => {
   let useCase: CreatePaymentIntentUseCase
@@ -26,7 +27,7 @@ describe('CreatePaymentIntentUseCase', () => {
     const intent = await useCase.execute(command)
 
     expect(intent).toBeDefined()
-    expect(intent.getStatus()).toBe(PaymentStatus.CREATED)
+    expect(intent.status).toBe(PaymentStatus.CREATED)
     expect(repository.save).toHaveBeenCalledTimes(1)
   })
 

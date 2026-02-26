@@ -1,76 +1,73 @@
-datasource db {
-    provider = "postgresql"
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
 }
 
-generator client {
-    provider = "prisma-client-js"
-    output   = "../src/generated/prisma"
+datasource db {
+  provider = "postgresql"
 }
 
 model User {
-    id String @id @default(uuid())
-    email String @unique
-    password String
-    role Role
-    active Boolean @default(true)
-    createdAt DateTime @default(now())
-}
-
-enum Role {
-    ADMIN
-    OPERATOR
-    CASHIER
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  role      Role
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
 }
 
 model Bill {
-    id String @id @default(uuid())
-    userId String
-    period String
-    consumptionM3 Float
-    fixedAmount Float
-    variableAmount Float
-    totalAmount Float
-    status BillStatus @default(PENDING)
-    createdAt DateTime @default(now())
-    payments PaymentIntent[]
-}
-
-
-enum BillStatus {
-    PENDING
-    PAID
-    CANCELLED
+  id             String          @id @default(uuid())
+  userId         String
+  period         String
+  consumptionM3  Float
+  fixedAmount    Float
+  variableAmount Float
+  totalAmount    Float
+  status         BillStatus      @default(PENDING)
+  createdAt      DateTime        @default(now())
+  payments       PaymentIntent[]
 }
 
 model PaymentIntent {
-    id String @id @default(uuid())
-    billId String
-    bill Bill @relation(fields: [billId], references: [id])
-    provider PaymentProvider
-    amount Float
-    currency String @default("BOB")
-    status PaymentStatus @default(CREATED)
-    externalReference String?
-    expiresAt DateTime
-    createdAt DateTime @default(now())
-    confirmedAt DateTime?
+  id                String          @id @default(uuid())
+  billId            String
+  provider          PaymentProvider
+  currency          String          @default("BOB")
+  amount            Float
+  status            PaymentStatus   @default(CREATED)
+  externalReference String?
+  expiresAt         DateTime
+  createdAt         DateTime        @default(now())
+  confirmedAt       DateTime?
+  bill              Bill            @relation(fields: [billId], references: [id])
 
+  @@index([billId])
+  @@index([externalReference])
+}
 
-    @@index([billId])
-    @@index([externalReference])
+enum Role {
+  ADMIN
+  OPERATOR
+  CASHIER
+}
+
+enum BillStatus {
+  PENDING
+  PAID
+  CANCELLED
 }
 
 enum PaymentStatus {
-    CREATED
-    PENDING
-    CONFIRMED
-    FAILED
-    EXPIRED
+  CREATED
+  PENDING
+  CONFIRMED
+  FAILED
+  EXPIRED
 }
 
-
 enum PaymentProvider {
-    QR_BNB
-    QR_BCP
-    QR_SIMPLE
+  QR_BNB
+  QR_BCP
+  QR_SIMPLE
 }

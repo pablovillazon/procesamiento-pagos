@@ -3,7 +3,7 @@ import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import * as bcrypt from 'bcryptjs';
 import { UserEntity } from "../users/entities/user.entity";
-import { User } from "src/generated/prisma/client";
+//import { User } from "@prisma/client";
 
 @Injectable()
 export class AuthService {
@@ -11,7 +11,7 @@ export class AuthService {
 
   async validateUser(email: string, password: string) {
     const user = await this.usersService.findByEmail(email);
-
+    console.log(`User found for email PV ${email}: ${JSON.stringify(user)}`);
     console.log(`Validating user: ${email}`);
 
     if(!user || !bcrypt.compareSync(password, user.password)) return null;
